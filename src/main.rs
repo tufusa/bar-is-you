@@ -1,18 +1,19 @@
 use bevy::{app::PluginGroupBuilder, prelude::*};
 
+mod ball;
 mod block;
 mod block_collision;
 mod blocks;
+mod collider;
 mod config;
 mod position;
-mod collider;
-mod ball;
 
 fn main() {
     App::new()
         .add_plugins(plugins())
         .add_startup_system(setup)
         .add_system(block::transform_position)
+        .add_system(ball::transform_position)
         .run();
 }
 
@@ -32,7 +33,22 @@ fn plugins() -> PluginGroupBuilder {
         })
 }
 
-fn setup(mut commands: Commands) {
+fn setup(
+    mut commands: Commands,
+    meshes: ResMut<Assets<Mesh>>,
+    materials: ResMut<Assets<ColorMaterial>>,
+) {
     commands.spawn(Camera2dBundle::default());
-    blocks::spawn(commands, position::Position { x: -100., y: -100. }, 5, 5);
+    blocks::spawn(
+        &mut commands,
+        position::Position { x: -100., y: -100. },
+        5,
+        5,
+    );
+    ball::spawn(
+        &mut commands,
+        meshes,
+        materials,
+        position::Position { x: 100., y: 100. },
+    )
 }

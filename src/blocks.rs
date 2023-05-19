@@ -2,9 +2,9 @@ use bevy::prelude::*;
 
 use crate::{block, config, position};
 
-pub fn spawn(mut commands: Commands, init_pos: position::Position, x_num: u32, num_y: u32) {
+pub fn spawn(commands: &mut Commands, init_pos: position::Position, x_num: u32, y_num: u32) {
     let mut pos = init_pos;
-    for _ in 0..num_y {
+    for _ in 0..y_num {
         pos.x = init_pos.x;
         for _ in 0..x_num {
             block::spawn(commands, pos);

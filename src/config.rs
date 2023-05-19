@@ -11,10 +11,10 @@ impl Screen {
 impl Block {
     pub const SIZE: Vec2 = Vec2 { x: 60., y: 30. };
     pub const GAP: f32 = 5.;
-    pub const COLOR: Color = Color::hex("FFFFFF").unwrap();
+    pub const COLOR: Color = Color::rgb(1., 1., 1.);
 }
 
 impl Ball {
-    pub const RADIUS: f32 = 30.;
-    pub const COLOR: Color = Color::hex("FFFFFF").unwrap();
+    pub const RADIUS: f32 = 15.;
+    pub const COLOR: Color = Color::rgb(1., 1., 1.);
 }
