@@ -1,12 +1,18 @@
 use bevy::{app::PluginGroupBuilder, prelude::*};
+
 mod block;
+mod block_collision;
+mod blocks;
 mod config;
 mod position;
+mod collider;
+mod ball;
 
 fn main() {
     App::new()
         .add_plugins(plugins())
         .add_startup_system(setup)
+        .add_system(block::transform_position)
         .run();
 }
 
@@ -15,7 +21,7 @@ fn plugins() -> PluginGroupBuilder {
         .set(WindowPlugin {
             primary_window: Some(Window {
                 title: "ブロック崩し".into(),
-                resolution: (config::SCREEN_WIDTH as f32, config::SCREEN_HEIGHT as f32).into(),
+                resolution: config::Screen::SIZE.into(),
                 ..Default::default()
             }),
             ..Default::default()
@@ -28,5 +34,5 @@ fn plugins() -> PluginGroupBuilder {
 
 fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
-    block::spawn(&mut commands, position::Position { x: 0, y: 0 })
+    blocks::spawn(commands, position::Position { x: -100., y: -100. }, 5, 5);
 }
