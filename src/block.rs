@@ -1,6 +1,6 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, sprite::collide_aabb::*};
 
-use crate::{config, position};
+use crate::{ball, collider, config, position};
 
 #[derive(Component)]
 pub struct Block;
@@ -9,19 +9,15 @@ pub fn spawn(commands: &mut Commands, position: position::Position) {
     commands
         .spawn(SpriteBundle {
             sprite: Sprite {
-                rect: Option::Some(Rect::new(
-                    position.x,
-                    position.y,
-                    position.x + config::Block::SIZE.x,
-                    position.y + config::Block::SIZE.y,
-                )),
                 color: config::Block::COLOR,
                 ..Default::default()
             },
+            transform: Transform::from_scale(config::Block::SIZE),
             ..Default::default()
         })
         .insert(Block)
-        .insert(position);
+        .insert(position)
+        .insert(collider::Collider);
 }
 
 pub fn transform_position(
@@ -36,4 +32,27 @@ pub fn transform_position(
                 z: 0.,
             };
         });
+}
+
+pub fn collision_ball(
+    mut commands: Commands,
+    mut ball_query: Query<&Transform, (With<ball::Ball>, With<collider::Collider>)>,
+    block_query: Query<(Entity, &Transform), (With<Block>, With<collider::Collider>)>,
+    mut ball_reflection_event_writer: EventWriter<ball::ReflectionEvent>,
+) {
+    let ball_transform = ball_query.single_mut();
+
+    block_query.iter().for_each(|(entity, transform)| {
+        let ball_collision = collide(
+            transform.translation,
+            transform.scale.truncate(),
+            ball_transform.translation,
+            ball_transform.scale.truncate(),
+        );
+
+        if let Some(ball_collision) = ball_collision {
+            commands.entity(entity).despawn();
+            ball_reflection_event_writer.send(ball::ReflectionEvent { ball_collision });
+        }
+    });
 }
