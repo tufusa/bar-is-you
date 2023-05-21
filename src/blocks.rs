@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::{block, config, position};
 
-pub fn spawn(commands: &mut Commands, init_pos_y_from_top: f32, x_num: u32, y_num: u32) {
+pub fn spawn(parent: &mut ChildBuilder, init_pos_y_from_top: f32, x_num: u32, y_num: u32) {
     let init_pos_x = -(config::Block::SIZE.x + config::Block::GAP) * (x_num - 1) as f32 / 2.;
     let mut pos = position::Position {
         x: init_pos_x,
@@ -12,7 +12,7 @@ pub fn spawn(commands: &mut Commands, init_pos_y_from_top: f32, x_num: u32, y_nu
     for _ in 0..y_num {
         pos.x = init_pos_x;
         for _ in 0..x_num {
-            block::spawn(commands, pos);
+            block::spawn(parent, pos);
             pos.x += config::Block::SIZE.x + config::Block::GAP;
         }
         pos.y -= config::Block::SIZE.y + config::Block::GAP;

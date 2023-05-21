@@ -12,13 +12,13 @@ pub struct ReflectionEvent {
 }
 
 pub fn spawn(
-    commands: &mut Commands,
+    parent: &mut ChildBuilder,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     position: position::Position,
     velocity: velocity::Velocity,
 ) {
-    commands
+    parent
         .spawn(MaterialMesh2dBundle {
             mesh: meshes.add(shape::Circle::default().into()).into(),
             transform: Transform::from_scale(config::Ball::SIZE),

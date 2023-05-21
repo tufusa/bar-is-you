@@ -10,7 +10,9 @@ mod block;
 mod blocks;
 mod collider;
 mod config;
-mod game;
+mod font;
+mod game_over;
+mod in_game;
 mod position;
 mod title;
 mod velocity;
@@ -25,14 +27,15 @@ fn main() {
         .add_event::<ball::ReflectionEvent>()
         .add_system(setup.on_startup())
         .add_system(title::setup.in_schedule(OnEnter(AppState::Title)))
-        .add_system(title::input.in_set(OnUpdate(AppState::Title)))
+        .add_system(title::check_input.in_set(OnUpdate(AppState::Title)))
         .add_system(title::cleanup.in_schedule(OnExit(AppState::Title)))
-        .add_system(game::setup.in_schedule(OnEnter(AppState::InGame)))
+        .add_system(in_game::setup.in_schedule(OnEnter(AppState::InGame)))
         .add_systems(
             (
+                in_game::check_clear,
+                in_game::check_over,
                 block::transform_position,
                 block::collision_ball,
-                ball::transform_position,
                 ball::transform_position,
                 ball::position_velocity,
                 ball::reflection_event_handler,
@@ -43,6 +46,10 @@ fn main() {
             )
                 .in_set(OnUpdate(AppState::InGame)),
         )
+        .add_system(in_game::cleanup.in_schedule(OnExit(AppState::InGame)))
+        .add_system(game_over::setup.in_schedule(OnEnter(AppState::GameOver)))
+        .add_system(game_over::check_input.in_set(OnUpdate(AppState::GameOver)))
+        .add_system(game_over::cleanup.in_schedule(OnExit(AppState::GameOver)))
         .run();
 }
 
@@ -51,7 +58,7 @@ fn plugins() -> PluginGroupBuilder {
         .set(WindowPlugin {
             primary_window: Some(Window {
                 title: config::Title::TITLE.into(),
-                mode: WindowMode::BorderlessFullscreen,
+                mode: WindowMode::Fullscreen,
                 resizable: false,
                 ..Default::default()
             }),
@@ -64,7 +71,9 @@ fn plugins() -> PluginGroupBuilder {
         .add_before::<bevy::asset::AssetPlugin, _>(EmbeddedAssetPlugin)
 }
 
-fn setup(mut commands: Commands) {
+fn setup(mut commands: Commands, server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
     commands.insert_resource(ClearColor(Color::rgb(0., 0., 0.)));
+    commands.insert_resource(font::Title(server.load("fonts/AmaticSC-Bold.ttf")));
+    commands.insert_resource(font::UI(server.load("fonts/Roboto-Thin.ttf")));
 }

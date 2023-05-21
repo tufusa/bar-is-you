@@ -5,8 +5,8 @@ use crate::{ball, collider, wall_location};
 #[derive(Component)]
 pub struct Wall;
 
-pub fn spawn(commands: &mut Commands, location: wall_location::WallLocation) {
-    commands
+pub fn spawn(parent: &mut ChildBuilder, location: wall_location::WallLocation) {
+    parent
         .spawn(SpriteBundle {
             sprite: Sprite {
                 color: Color::WHITE,

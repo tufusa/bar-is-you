@@ -2,9 +2,9 @@ use bevy::prelude::*;
 
 use crate::{wall, wall_location::WallLocation};
 
-pub fn spawn(commands: &mut Commands) {
-    wall::spawn(commands, WallLocation::Left);
-    wall::spawn(commands, WallLocation::Right);
-    wall::spawn(commands, WallLocation::Top);
+pub fn spawn(parent: &mut ChildBuilder) {
+    wall::spawn(parent, WallLocation::Left);
+    wall::spawn(parent, WallLocation::Right);
+    wall::spawn(parent, WallLocation::Top);
     // wall::spawn(commands, WallLocation::Bottom);
 }
