@@ -1,7 +1,8 @@
 use bevy::prelude::*;
 
 use crate::{
-    app_state::AppState, ball, bar, block::Block, blocks, config, position, velocity, walls,
+    app_state::AppState, ball, bar, block::Block, blocks, config, font, position, rule, ui,
+    velocity, walls,
 };
 
 #[derive(Component)]
@@ -11,11 +12,17 @@ pub fn setup(
     mut commands: Commands,
     meshes: ResMut<Assets<Mesh>>,
     materials: ResMut<Assets<ColorMaterial>>,
+    ui_base_query: Query<Entity, With<ui::Base>>,
+    rule_font: Res<font::Rule>,
 ) {
     commands
         .spawn(SpatialBundle::default())
         .insert(InGame)
         .with_children(|parent| spawn(parent, meshes, materials));
+
+    commands
+        .entity(ui_base_query.single())
+        .with_children(|parent| rule::spawn(parent, rule_font, InGame));
 }
 
 fn spawn(
@@ -61,10 +68,4 @@ pub fn check_over(
             return;
         }
     })
-}
-
-pub fn cleanup(mut commands: Commands, in_game_query: Query<Entity, With<InGame>>) {
-    // in_game_query.iter().for_each(|in_game| {
-    // commands.entity(in_game).despawn_recursive();
-    // })
 }

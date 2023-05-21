@@ -14,11 +14,13 @@ mod font;
 mod game_over;
 mod in_game;
 mod position;
+mod rule;
 mod title;
 mod velocity;
 mod wall;
 mod wall_location;
 mod walls;
+mod ui;
 
 fn main() {
     App::new()
@@ -46,7 +48,6 @@ fn main() {
             )
                 .in_set(OnUpdate(AppState::InGame)),
         )
-        .add_system(in_game::cleanup.in_schedule(OnExit(AppState::InGame)))
         .add_system(game_over::setup.in_schedule(OnEnter(AppState::GameOver)))
         .add_system(game_over::check_input.in_set(OnUpdate(AppState::GameOver)))
         .add_system(game_over::cleanup.in_schedule(OnExit(AppState::GameOver)))
@@ -73,7 +74,9 @@ fn plugins() -> PluginGroupBuilder {
 
 fn setup(mut commands: Commands, server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
+    ui::spawn(&mut commands);
     commands.insert_resource(ClearColor(Color::rgb(0., 0., 0.)));
     commands.insert_resource(font::Title(server.load("fonts/AmaticSC-Bold.ttf")));
     commands.insert_resource(font::UI(server.load("fonts/Roboto-Thin.ttf")));
+    commands.insert_resource(font::Rule(server.load("fonts/AmaticSC-Regular.ttf")));
 }
