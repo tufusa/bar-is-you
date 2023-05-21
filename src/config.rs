@@ -1,10 +1,15 @@
 use bevy::prelude::*;
 
+pub struct Title;
 pub struct Field;
 pub struct Block;
 pub struct Ball;
 pub struct Wall;
 pub struct Bar;
+
+impl Title {
+    pub const TITLE: &str = "Bar Is You";
+}
 
 impl Field {
     pub const SIZE: Vec2 = Vec2 { x: 1200., y: 700. };
