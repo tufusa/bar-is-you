@@ -1,12 +1,13 @@
 use bevy::prelude::*;
 
-pub struct Screen;
+pub struct Field;
 pub struct Block;
 pub struct Ball;
 pub struct Wall;
+pub struct Bar;
 
-impl Screen {
-    pub const SIZE: Vec2 = Vec2 { x: 860., y: 540. };
+impl Field {
+    pub const SIZE: Vec2 = Vec2 { x: 1200., y: 700. };
 }
 
 impl Block {
@@ -30,5 +31,14 @@ impl Ball {
 }
 
 impl Wall {
-    pub const THICKNESS: f32 = 30.;
+    pub const THICKNESS: f32 = 15.;
+}
+
+impl Bar {
+    pub const SIZE: Vec3 = Vec3 {
+        x: 250.,
+        y: 10.,
+        z: 0.,
+    };
+    pub const COLOR: Color = Color::rgb(1., 1., 1.);
 }
