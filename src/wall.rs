@@ -5,7 +5,13 @@ use crate::{ball, collider, wall_location};
 #[derive(Component)]
 pub struct Wall;
 
-pub fn spawn(parent: &mut ChildBuilder, location: wall_location::WallLocation) {
+pub fn spawn(
+    parent: &mut ChildBuilder,
+    location: wall_location::WallLocation,
+    size: Vec2,
+    thickness: f32,
+    bundle: impl Bundle,
+) {
     parent
         .spawn(SpriteBundle {
             sprite: Sprite {
@@ -13,14 +19,15 @@ pub fn spawn(parent: &mut ChildBuilder, location: wall_location::WallLocation) {
                 ..Default::default()
             },
             transform: Transform {
-                translation: location.position().extend(0.),
-                scale: location.size().extend(0.),
+                translation: location.position(size, thickness).extend(0.),
+                scale: location.size(size, thickness).extend(0.),
                 ..Default::default()
             },
             ..Default::default()
         })
         .insert(Wall)
-        .insert(collider::Collider);
+        .insert(collider::Collider)
+        .insert(bundle);
 }
 
 pub fn collision_ball(

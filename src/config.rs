@@ -1,11 +1,14 @@
 use bevy::prelude::*;
 
+use crate::rule;
+
 pub struct Title;
 pub struct Field;
 pub struct Block;
 pub struct Ball;
 pub struct Wall;
 pub struct Bar;
+pub struct Rule;
 
 impl Title {
     pub const TITLE: &str = "Bar Is You";
@@ -46,4 +49,13 @@ impl Bar {
         z: 0.,
     };
     pub const COLOR: Color = Color::rgb(1., 1., 1.);
+}
+
+impl Rule {
+    pub const INIT: rule::Rule = rule::Rule {
+        is_you: rule::IsYou::Bar,
+        is_death: rule::IsDeath::Out,
+        is_win: rule::IsWin::BreakAll,
+        is_move: rule::IsMove::Ball,
+    };
 }

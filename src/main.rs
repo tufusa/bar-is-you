@@ -16,11 +16,12 @@ mod in_game;
 mod position;
 mod rule;
 mod title;
+mod ui;
 mod velocity;
 mod wall;
 mod wall_location;
-mod walls;
-mod ui;
+mod field;
+mod out_wall;
 
 fn main() {
     App::new()
@@ -45,6 +46,7 @@ fn main() {
                 bar::transform_position,
                 bar::collision_ball,
                 bar::move_position,
+                rule::server_displayer,
             )
                 .in_set(OnUpdate(AppState::InGame)),
         )

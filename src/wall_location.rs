@@ -1,4 +1,3 @@
-use crate::config;
 use bevy::prelude::*;
 
 #[derive(Clone, Copy)]
@@ -10,39 +9,39 @@ pub enum WallLocation {
 }
 
 impl WallLocation {
-    const WALL_X: f32 = config::Field::SIZE.x / 2. + config::Wall::THICKNESS / 2.;
-    const WALL_Y: f32 = config::Field::SIZE.y / 2. + config::Wall::THICKNESS / 2.;
-
-    pub fn position(self) -> Vec2 {
+    pub fn position(self, size: Vec2, thickness: f32) -> Vec2 {
+        let wall_x = size.x / 2. + thickness / 2.;
+        let wall_y = size.y / 2. + thickness / 2.;
+    
         match self {
             Self::Left => Vec2 {
-                x: -Self::WALL_X,
+                x: -wall_x,
                 y: 0.,
             },
             Self::Right => Vec2 {
-                x: Self::WALL_X,
+                x: wall_x,
                 y: 0.,
             },
             Self::Top => Vec2 {
                 x: 0.,
-                y: Self::WALL_Y,
+                y: wall_y,
             },
             Self::Bottom => Vec2 {
                 x: 0.,
-                y: -Self::WALL_Y,
+                y: -wall_y,
             },
         }
     }
 
-    pub fn size(self) -> Vec2 {
+    pub fn size(self, size: Vec2, thickness: f32) -> Vec2 {
         match self {
             Self::Left | Self::Right => Vec2 {
-                x: config::Wall::THICKNESS,
-                y: config::Field::SIZE.y + config::Wall::THICKNESS * 2.,
+                x: thickness,
+                y: size.y + thickness * 2.,
             },
             Self::Top | Self::Bottom => Vec2 {
-                x: config::Field::SIZE.x + config::Wall::THICKNESS * 2.,
-                y: config::Wall::THICKNESS,
+                x: size.x + thickness * 2.,
+                y: thickness,
             },
         }
     }

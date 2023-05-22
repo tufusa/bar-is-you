@@ -3,7 +3,7 @@ use bevy::{
     sprite::{collide_aabb::*, ColorMaterial, MaterialMesh2dBundle},
 };
 
-use crate::{collider, config, position, velocity};
+use crate::{collider, config, position, velocity, rule};
 
 #[derive(Component)]
 pub struct Ball;
@@ -43,9 +43,14 @@ pub fn transform_position(
 }
 
 pub fn position_velocity(
+    rule_server_query: Query<&rule::RuleServer>, 
     time: Res<Time>,
     mut ball_query: Query<(&mut position::Position, &velocity::Velocity), With<Ball>>,
 ) {
+    if rule_server_query.single().rule.is_move != rule::IsMove::Ball {
+        return
+    }
+
     let (mut pos, velocity) = ball_query.single_mut();
     let delta = time.delta_seconds();
 

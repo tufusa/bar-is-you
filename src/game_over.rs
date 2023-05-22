@@ -26,7 +26,12 @@ fn spawn(parent: &mut ChildBuilder, ui_font: Res<font::UI>) {
                     color: Color::WHITE,
                 },
             )
-            .with_text_alignment(TextAlignment::Center),
+            .with_text_alignment(TextAlignment::Center)
+            .with_style(Style {
+                position_type: PositionType::Absolute,
+                position: UiRect::bottom(Val::Px(50.)),
+                ..Default::default()
+            }),
         )
         .insert(GameOver);
 }
