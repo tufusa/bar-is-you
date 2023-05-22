@@ -16,10 +16,7 @@ pub fn setup(
     rule_font: Res<font::Rule>,
     window_query: Query<&Window>,
 ) {
-    commands
-        .spawn(SpatialBundle::default())
-        .insert(InGame)
-        .with_children(|parent| spawn(parent, meshes, materials, window_query.single()));
+    spawn(&mut commands, meshes, materials, window_query.single());
 
     rule::spawn_server(&mut commands, config::Rule::INIT, InGame);
 
@@ -29,14 +26,14 @@ pub fn setup(
 }
 
 fn spawn(
-    parent: &mut ChildBuilder,
+    commands: &mut Commands,
     meshes: ResMut<Assets<Mesh>>,
     materials: ResMut<Assets<ColorMaterial>>,
     window: &Window,
 ) {
-    blocks::spawn(parent, 50., 15, 5);
+    blocks::spawn(commands, 50., 15, 5, InGame);
     ball::spawn(
-        parent,
+        commands,
         meshes,
         materials,
         position::Position {
@@ -44,27 +41,42 @@ fn spawn(
             y: -200. + config::Ball::SIZE.y,
         },
         velocity::Velocity { x: 220., y: 220. },
+        InGame,
     );
-    field::spawn(parent, InGame);
+    field::spawn(commands, InGame);
     bar::spawn(
-        parent,
+        commands,
         position::Position { x: 0., y: -200. },
         velocity::Velocity { x: 200., y: 200. },
+        InGame,
     );
-    out_wall::spawn(parent, window, InGame);
+    out_wall::spawn(commands, window, InGame);
 }
 
-pub fn check_clear(block_query: Query<&Block>, mut next_state: ResMut<NextState<AppState>>) {
+pub fn check_break_all(
+    block_query: Query<&Block>,
+    mut next_state: ResMut<NextState<AppState>>,
+    rule_server_query: Query<&rule::RuleServer>,
+) {
+    if rule_server_query.single().rule.is_win != rule::IsWin::BreakAll {
+        return;
+    }
+
     if block_query.is_empty() {
         next_state.set(AppState::GameClear);
     }
 }
 
-pub fn check_over(
+pub fn check_out_wall(
     out_wall_query: Query<&Transform, With<out_wall::OutWall>>,
     ball_query: Query<&Transform, With<ball::Ball>>,
     mut next_state: ResMut<NextState<AppState>>,
+    rule_server_query: Query<&rule::RuleServer>,
 ) {
+    if rule_server_query.single().rule.is_death != rule::IsDeath::Out {
+        return;
+    }
+
     let ball_transform = ball_query.single();
 
     out_wall_query.iter().for_each(|out_wall_transform| {

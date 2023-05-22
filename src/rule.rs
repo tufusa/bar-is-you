@@ -19,14 +19,12 @@ pub struct Rule {
 
 #[derive(PartialEq, Eq)]
 pub enum IsYou {
-    None,
     Bar,
     Ball,
 }
 
 #[derive(PartialEq, Eq)]
 pub enum IsDeath {
-    None,
     Out,
     Block,
 }
@@ -39,7 +37,6 @@ pub enum IsWin {
 
 #[derive(PartialEq, Eq)]
 pub enum IsMove {
-    None,
     Ball,
     Bar,
     Block,
@@ -54,7 +51,6 @@ impl RuleServer {
 impl IsYou {
     fn to_string(&self) -> Option<String> {
         match self {
-            IsYou::None => Option::None,
             IsYou::Bar => Some("Bar Is You".into()),
             IsYou::Ball => Some("Ball Is You".into()),
         }
@@ -64,7 +60,6 @@ impl IsYou {
 impl IsDeath {
     fn to_string(&self) -> Option<String> {
         match self {
-            IsDeath::None => Option::None,
             IsDeath::Out => Some("Out Is Death".into()),
             IsDeath::Block => Some("Block Is Death".into()),
         }
@@ -83,7 +78,6 @@ impl IsWin {
 impl IsMove {
     fn to_string(&self) -> Option<String> {
         match self {
-            IsMove::None => Option::None,
             IsMove::Ball => Some("Ball Is Move".into()),
             IsMove::Bar => Some("Bar Is Move".into()),
             IsMove::Block => Some("Block Is Move".into()),
@@ -92,16 +86,10 @@ impl IsMove {
 }
 
 pub fn spawn_server(commands: &mut Commands, rule: Rule, bundle: impl Bundle) {
-    commands
-        .spawn(RuleServer::from(rule))
-        .insert(bundle);
+    commands.spawn(RuleServer::from(rule)).insert(bundle);
 }
 
-pub fn spawn_displayer(
-    parent: &mut ChildBuilder,
-    font: Res<font::Rule>,
-    bundle: impl Bundle,
-) {
+pub fn spawn_displayer(parent: &mut ChildBuilder, font: Res<font::Rule>, bundle: impl Bundle) {
     let style = &TextStyle {
         font: font.clone().0,
         font_size: 70.,

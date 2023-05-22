@@ -1,18 +1,18 @@
 use bevy::{prelude::*, sprite::collide_aabb::*};
 
-use crate::{ball, collider, wall_location};
+use crate::{ball, collider, collision, in_game, wall_location};
 
 #[derive(Component)]
 pub struct Wall;
 
 pub fn spawn(
-    parent: &mut ChildBuilder,
+    commands: &mut Commands,
     location: wall_location::WallLocation,
     size: Vec2,
     thickness: f32,
     bundle: impl Bundle,
 ) {
-    parent
+    commands
         .spawn(SpriteBundle {
             sprite: Sprite {
                 color: Color::WHITE,
@@ -32,12 +32,16 @@ pub fn spawn(
 
 pub fn collision_ball(
     ball_query: Query<&Transform, (With<ball::Ball>, With<collider::Collider>)>,
-    wall_query: Query<&Transform, (With<Wall>, With<collider::Collider>)>,
+    wall_query: Query<
+        (&Transform, Option<&in_game::InGame>),
+        (With<Wall>, With<collider::Collider>),
+    >,
     mut ball_reflection_event_writer: EventWriter<ball::ReflectionEvent>,
+    mut ball_collision_wall_event_writer: EventWriter<ball::CollisionWallEvent>,
 ) {
     let ball_transform = ball_query.single();
 
-    wall_query.iter().for_each(|transform| {
+    wall_query.iter().for_each(|(transform, in_game)| {
         let ball_collision = collide(
             transform.translation,
             transform.scale.truncate(),
@@ -46,7 +50,13 @@ pub fn collision_ball(
         );
 
         if let Some(ball_collision) = ball_collision {
-            ball_reflection_event_writer.send(ball::ReflectionEvent { ball_collision })
+            let ball_collision = collision::Collision::from(ball_collision);
+
+            ball_reflection_event_writer.send(ball::ReflectionEvent { ball_collision });
+
+            if in_game.is_some() {
+                ball_collision_wall_event_writer.send(ball::CollisionWallEvent { ball_collision });
+            }
         }
     });
 }

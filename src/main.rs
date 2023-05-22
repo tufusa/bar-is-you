@@ -9,10 +9,14 @@ mod bar;
 mod block;
 mod blocks;
 mod collider;
+mod collision;
 mod config;
+mod field;
 mod font;
+mod game_clear;
 mod game_over;
 mod in_game;
+mod out_wall;
 mod position;
 mod rule;
 mod title;
@@ -20,14 +24,13 @@ mod ui;
 mod velocity;
 mod wall;
 mod wall_location;
-mod field;
-mod out_wall;
 
 fn main() {
     App::new()
         .add_plugins(plugins())
         .add_state::<AppState>()
         .add_event::<ball::ReflectionEvent>()
+        .add_event::<ball::CollisionWallEvent>()
         .add_system(setup.on_startup())
         .add_system(title::setup.in_schedule(OnEnter(AppState::Title)))
         .add_system(title::check_input.in_set(OnUpdate(AppState::Title)))
@@ -35,24 +38,33 @@ fn main() {
         .add_system(in_game::setup.in_schedule(OnEnter(AppState::InGame)))
         .add_systems(
             (
-                in_game::check_clear,
-                in_game::check_over,
+                in_game::check_break_all,
+                in_game::check_out_wall,
+                field::check_rule,
                 block::transform_position,
                 block::collision_ball,
                 ball::transform_position,
                 ball::position_velocity,
+                ball::input_position,
                 ball::reflection_event_handler,
+                ball::collision_wall_event_handler,
                 wall::collision_ball,
                 bar::transform_position,
                 bar::collision_ball,
-                bar::move_position,
+                bar::input_position,
                 rule::server_displayer,
             )
                 .in_set(OnUpdate(AppState::InGame)),
         )
+        .add_systems(
+            (block::position_velocity, block::collision_wall).in_set(OnUpdate(AppState::InGame)),
+        )
         .add_system(game_over::setup.in_schedule(OnEnter(AppState::GameOver)))
         .add_system(game_over::check_input.in_set(OnUpdate(AppState::GameOver)))
         .add_system(game_over::cleanup.in_schedule(OnExit(AppState::GameOver)))
+        .add_system(game_clear::setup.in_schedule(OnEnter(AppState::GameClear)))
+        .add_system(game_clear::check_input.in_set(OnUpdate(AppState::GameClear)))
+        .add_system(game_clear::cleanup.in_schedule(OnExit(AppState::GameClear)))
         .run();
 }
 

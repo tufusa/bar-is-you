@@ -53,9 +53,9 @@ impl Bar {
 
 impl Rule {
     pub const INIT: rule::Rule = rule::Rule {
-        is_you: rule::IsYou::Bar,
-        is_death: rule::IsDeath::Out,
+        is_you: rule::IsYou::Ball,
+        is_death: rule::IsDeath::Block,
         is_win: rule::IsWin::BreakAll,
-        is_move: rule::IsMove::Ball,
+        is_move: rule::IsMove::Block,
     };
 }

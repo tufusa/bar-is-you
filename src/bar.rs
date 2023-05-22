@@ -1,12 +1,17 @@
 use bevy::{prelude::*, sprite::collide_aabb::collide};
 
-use crate::{ball, collider, config, position, velocity};
+use crate::{ball, collider, collision, config, position, rule, velocity};
 
 #[derive(Component)]
 pub struct Bar;
 
-pub fn spawn(parent: &mut ChildBuilder, position: position::Position, velocity: velocity::Velocity) {
-    parent
+pub fn spawn(
+    commands: &mut Commands,
+    position: position::Position,
+    velocity: velocity::Velocity,
+    bundle: impl Bundle,
+) {
+    commands
         .spawn(SpriteBundle {
             sprite: Sprite {
                 color: config::Bar::COLOR,
@@ -18,7 +23,8 @@ pub fn spawn(parent: &mut ChildBuilder, position: position::Position, velocity: 
         .insert(Bar)
         .insert(position)
         .insert(velocity)
-        .insert(collider::Collider);
+        .insert(collider::Collider)
+        .insert(bundle);
 }
 
 pub fn transform_position(mut bar_query: Query<(&mut Transform, &position::Position), With<Bar>>) {
@@ -30,11 +36,16 @@ pub fn transform_position(mut bar_query: Query<(&mut Transform, &position::Posit
     };
 }
 
-pub fn move_position(
+pub fn input_position(
     input: Res<Input<KeyCode>>,
     time: Res<Time>,
     mut bar_query: Query<(&mut position::Position, &velocity::Velocity), With<Bar>>,
+    rule_server_query: Query<&rule::RuleServer>,
 ) {
+    if rule_server_query.single().rule.is_you != rule::IsYou::Bar {
+        return;
+    }
+
     let (mut position, velocity) = bar_query.single_mut();
     let delta = time.delta_seconds();
     let (disp_x, disp_y) = (velocity.x * delta, velocity.y * delta);
@@ -77,6 +88,8 @@ pub fn collision_ball(
     );
 
     if let Some(ball_collision) = ball_collision {
-        ball_reflection_event_writer.send(ball::ReflectionEvent { ball_collision });
+        ball_reflection_event_writer.send(ball::ReflectionEvent {
+            ball_collision: collision::Collision::from(ball_collision),
+        });
     }
 }

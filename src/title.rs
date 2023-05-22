@@ -66,7 +66,7 @@ fn spawn(parent: &mut ChildBuilder, title_font: Res<font::Title>, ui_font: Res<f
 }
 
 pub fn check_input(input: Res<Input<KeyCode>>, mut next_state: ResMut<NextState<AppState>>) {
-    if input.pressed(KeyCode::Space) {
+    if input.just_pressed(KeyCode::Space) {
         next_state.set(AppState::InGame);
     }
 }
