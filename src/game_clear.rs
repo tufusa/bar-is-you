@@ -48,7 +48,7 @@ fn spawn(parent: &mut ChildBuilder, title_font: Res<font::Title>, ui_font: Res<f
             .with_text_alignment(TextAlignment::Center)
             .with_style(Style {
                 position_type: PositionType::Absolute,
-                position: UiRect::bottom(Val::Px(50.)),
+                position: UiRect::bottom(Val::Px(20.)),
                 ..Default::default()
             }),
         )

@@ -29,7 +29,7 @@ fn spawn(parent: &mut ChildBuilder, ui_font: Res<font::UI>) {
             .with_text_alignment(TextAlignment::Center)
             .with_style(Style {
                 position_type: PositionType::Absolute,
-                position: UiRect::bottom(Val::Px(50.)),
+                position: UiRect::bottom(Val::Px(20.)),
                 ..Default::default()
             }),
         )
