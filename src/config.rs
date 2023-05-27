@@ -45,7 +45,7 @@ impl Wall {
 impl Bar {
     pub const SIZE: Vec3 = Vec3 {
         x: 250.,
-        y: 10.,
+        y: 20.,
         z: 0.,
     };
     pub const COLOR: Color = Color::rgb(1., 1., 1.);

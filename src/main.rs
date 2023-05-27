@@ -32,7 +32,7 @@ fn main() {
         .add_plugins(plugins())
         .add_state::<AppState>()
         .add_event::<ball::ReflectionEvent>()
-        .add_event::<ball::CollisionWallEvent>()
+        .add_event::<ball::JustifyEvent>()
         .add_system(setup.on_startup())
         .add_system(title::setup.in_schedule(OnEnter(AppState::Title)))
         .add_system(title::check_input.in_set(OnUpdate(AppState::Title)))
@@ -49,7 +49,7 @@ fn main() {
                 ball::position_velocity,
                 ball::input_position,
                 ball::reflection_event_handler,
-                ball::collision_wall_event_handler,
+                ball::justify_event_handler,
                 wall::collision_ball,
                 bar::transform_position,
                 bar::collision_ball,

@@ -88,8 +88,8 @@ pub fn collision_ball(
     );
 
     if let Some(ball_collision) = ball_collision {
-        ball_reflection_event_writer.send(ball::ReflectionEvent {
-            ball_collision: collision::Collision::from(ball_collision),
-        });
+        let ball_collision = collision::Collision::from(ball_collision);
+
+        ball_reflection_event_writer.send(ball::ReflectionEvent { ball_collision });
     }
 }

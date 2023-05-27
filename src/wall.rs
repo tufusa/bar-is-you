@@ -1,6 +1,6 @@
 use bevy::{prelude::*, sprite::collide_aabb::*};
 
-use crate::{ball, collider, collision, in_game, wall_location};
+use crate::{ball, collider, collision, out_wall, wall_location};
 
 #[derive(Component)]
 pub struct Wall;
@@ -33,15 +33,15 @@ pub fn spawn(
 pub fn collision_ball(
     ball_query: Query<&Transform, (With<ball::Ball>, With<collider::Collider>)>,
     wall_query: Query<
-        (&Transform, Option<&in_game::InGame>),
+        (&Transform, Option<&out_wall::OutWall>),
         (With<Wall>, With<collider::Collider>),
     >,
     mut ball_reflection_event_writer: EventWriter<ball::ReflectionEvent>,
-    mut ball_collision_wall_event_writer: EventWriter<ball::CollisionWallEvent>,
+    mut ball_collision_wall_event_writer: EventWriter<ball::JustifyEvent>,
 ) {
     let ball_transform = ball_query.single();
 
-    wall_query.iter().for_each(|(transform, in_game)| {
+    wall_query.iter().for_each(|(transform, out_wall)| {
         let ball_collision = collide(
             transform.translation,
             transform.scale.truncate(),
@@ -54,8 +54,11 @@ pub fn collision_ball(
 
             ball_reflection_event_writer.send(ball::ReflectionEvent { ball_collision });
 
-            if in_game.is_some() {
-                ball_collision_wall_event_writer.send(ball::CollisionWallEvent { ball_collision });
+            if out_wall.is_none() {
+                ball_collision_wall_event_writer.send(ball::JustifyEvent {
+                    ball_collision,
+                    transform: *transform,
+                });
             }
         }
     });

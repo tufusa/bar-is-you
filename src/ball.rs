@@ -10,8 +10,10 @@ pub struct Ball;
 pub struct ReflectionEvent {
     pub ball_collision: Collision,
 }
-pub struct CollisionWallEvent {
+pub struct JustifyEvent {
+    // めり込みを解除するイベント
     pub ball_collision: Collision,
+    pub transform: Transform,
 }
 
 pub fn spawn(
@@ -92,27 +94,35 @@ fn reflect(collision: &Collision, velocity: &mut Mut<velocity::Velocity>) {
     velocity.y = sign.y * velocity.y.abs();
 }
 
-pub fn collision_wall_event_handler(
+pub fn justify_event_handler(
     mut ball_query: Query<&mut position::Position, (With<Ball>, With<collider::Collider>)>,
-    mut ball_collision_wall_event_reader: EventReader<CollisionWallEvent>,
+    mut ball_justify_event_reader: EventReader<JustifyEvent>,
 ) {
     let mut ball_position = ball_query.single_mut();
 
-    ball_collision_wall_event_reader.iter().for_each(|event| {
-        justify_position(&event.ball_collision, &mut ball_position);
+    ball_justify_event_reader.iter().for_each(|event| {
+        justify_position(&event.ball_collision, &event.transform, &mut ball_position);
     })
 }
 
-fn justify_position(collision: &Collision, position: &mut Mut<position::Position>) {
-    let (justified_x, justified_y) = (
-        config::Field::SIZE.x / 2. - config::Ball::SIZE.x / 2.,
-        config::Field::SIZE.y / 2. - config::Ball::SIZE.y / 2.,
-    );
+fn justify_position(
+    collision: &Collision,
+    transform: &Transform,
+    position: &mut Mut<position::Position>,
+) {
+    let gap_x = transform.scale.x / 2. + config::Ball::SIZE.x / 2.;
+    let gap_y = transform.scale.y / 2. + config::Ball::SIZE.y / 2.;
+
+    let left_justified_x = transform.translation.x + gap_x;
+    let right_justified_x = transform.translation.x - gap_x;
+    let top_justified_y = transform.translation.y - gap_y;
+    let bottom_justified_y = transform.translation.y + gap_y;
+
     match collision {
-        Collision::Left => position.x = -justified_x,
-        Collision::Right => position.x = justified_x,
-        Collision::Top => position.y = justified_y,
-        Collision::Bottom => position.y = -justified_y,
+        Collision::Left => position.x = left_justified_x,
+        Collision::Right => position.x = right_justified_x,
+        Collision::Top => position.y = top_justified_y,
+        Collision::Bottom => position.y = bottom_justified_y,
         Collision::Inside => {}
     }
 }
