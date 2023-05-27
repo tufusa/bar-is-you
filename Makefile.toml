@@ -24,7 +24,7 @@ args = ["run", "--release"]
 
 [tasks.wasm-bindgen]
 command = "wasm-bindgen"
-args = ["--target", "web", "--out-dir", "docs", "target/wasm32-unknown-unknown/release/block-break.wasm", "--no-typescript"]
+args = ["--target", "web", "--out-dir", "docs", "target/wasm32-unknown-unknown/release/bar-is-you.wasm", "--no-typescript"]
 
 [tasks.serve]
 command = "python"

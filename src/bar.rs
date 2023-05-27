@@ -76,6 +76,7 @@ pub fn collision_ball(
     bar_query: Query<&Transform, (With<Bar>, With<collider::Collider>)>,
     ball_query: Query<&Transform, (With<ball::Ball>, With<collider::Collider>)>,
     mut ball_reflection_event_writer: EventWriter<ball::ReflectionEvent>,
+    mut ball_justify_event_writer: EventWriter<ball::JustifyEvent>,
 ) {
     let bar_transform = bar_query.single();
     let ball_transform = ball_query.single();
@@ -91,5 +92,9 @@ pub fn collision_ball(
         let ball_collision = collision::Collision::from(ball_collision);
 
         ball_reflection_event_writer.send(ball::ReflectionEvent { ball_collision });
+        ball_justify_event_writer.send(ball::JustifyEvent {
+            ball_collision,
+            transform: *bar_transform,
+        });
     }
 }

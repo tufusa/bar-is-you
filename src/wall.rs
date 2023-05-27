@@ -37,7 +37,7 @@ pub fn collision_ball(
         (With<Wall>, With<collider::Collider>),
     >,
     mut ball_reflection_event_writer: EventWriter<ball::ReflectionEvent>,
-    mut ball_collision_wall_event_writer: EventWriter<ball::JustifyEvent>,
+    mut ball_justify_event_writer: EventWriter<ball::JustifyEvent>,
 ) {
     let ball_transform = ball_query.single();
 
@@ -55,7 +55,7 @@ pub fn collision_ball(
             ball_reflection_event_writer.send(ball::ReflectionEvent { ball_collision });
 
             if out_wall.is_none() {
-                ball_collision_wall_event_writer.send(ball::JustifyEvent {
+                ball_justify_event_writer.send(ball::JustifyEvent {
                     ball_collision,
                     transform: *transform,
                 });

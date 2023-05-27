@@ -77,6 +77,7 @@ fn plugins() -> PluginGroupBuilder {
             primary_window: Some(Window {
                 title: config::Title::TITLE.into(),
                 mode: WindowMode::Fullscreen,
+                present_mode: PresentMode::AutoVsync,
                 resizable: false,
                 ..Default::default()
             }),

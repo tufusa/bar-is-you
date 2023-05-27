@@ -10,8 +10,9 @@ pub struct Ball;
 pub struct ReflectionEvent {
     pub ball_collision: Collision,
 }
+
+// めり込みを解除するイベント
 pub struct JustifyEvent {
-    // めり込みを解除するイベント
     pub ball_collision: Collision,
     pub transform: Transform,
 }
@@ -107,22 +108,22 @@ pub fn justify_event_handler(
 
 fn justify_position(
     collision: &Collision,
-    transform: &Transform,
-    position: &mut Mut<position::Position>,
+    against_transform: &Transform,
+    ball_position: &mut Mut<position::Position>,
 ) {
-    let gap_x = transform.scale.x / 2. + config::Ball::SIZE.x / 2.;
-    let gap_y = transform.scale.y / 2. + config::Ball::SIZE.y / 2.;
+    let gap_x = against_transform.scale.x / 2. + config::Ball::SIZE.x / 2.;
+    let gap_y = against_transform.scale.y / 2. + config::Ball::SIZE.y / 2.;
 
-    let left_justified_x = transform.translation.x + gap_x;
-    let right_justified_x = transform.translation.x - gap_x;
-    let top_justified_y = transform.translation.y - gap_y;
-    let bottom_justified_y = transform.translation.y + gap_y;
+    let left_justified_x = against_transform.translation.x + gap_x;
+    let right_justified_x = against_transform.translation.x - gap_x;
+    let top_justified_y = against_transform.translation.y - gap_y;
+    let bottom_justified_y = against_transform.translation.y + gap_y;
 
     match collision {
-        Collision::Left => position.x = left_justified_x,
-        Collision::Right => position.x = right_justified_x,
-        Collision::Top => position.y = top_justified_y,
-        Collision::Bottom => position.y = bottom_justified_y,
+        Collision::Left => ball_position.x = ball_position.x.max(left_justified_x),
+        Collision::Right => ball_position.x = ball_position.x.min(right_justified_x),
+        Collision::Top => ball_position.y = ball_position.y.min(top_justified_y),
+        Collision::Bottom => ball_position.y = ball_position.y.max(bottom_justified_y),
         Collision::Inside => {}
     }
 }
