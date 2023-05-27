@@ -1,6 +1,8 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // releaseではコンソールを非表示
 use app_state::AppState;
 use bevy::{app::PluginGroupBuilder, prelude::*, window::*};
+
+#[cfg(not(target_family = "wasm"))]
 use bevy_embedded_assets::EmbeddedAssetPlugin; // asstesを実行ファイルに埋め込む
 
 mod app_state;
@@ -68,6 +70,7 @@ fn main() {
         .run();
 }
 
+#[cfg(not(target_family = "wasm"))]
 fn plugins() -> PluginGroupBuilder {
     DefaultPlugins
         .set(WindowPlugin {
@@ -79,11 +82,19 @@ fn plugins() -> PluginGroupBuilder {
             }),
             ..Default::default()
         })
-        .set(AssetPlugin {
-            watch_for_changes: true,
-            ..Default::default()
-        })
         .add_before::<bevy::asset::AssetPlugin, _>(EmbeddedAssetPlugin)
+}
+
+#[cfg(target_family = "wasm")]
+fn plugins() -> PluginGroupBuilder {
+    DefaultPlugins.set(WindowPlugin {
+        primary_window: Some(Window {
+            title: config::Title::TITLE.into(),
+            resolution: (1536., 864.).into(),
+            ..Default::default()
+        }),
+        ..Default::default()
+    })
 }
 
 fn setup(mut commands: Commands, server: Res<AssetServer>) {

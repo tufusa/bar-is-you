@@ -12,24 +12,12 @@ impl WallLocation {
     pub fn position(self, size: Vec2, thickness: f32) -> Vec2 {
         let wall_x = size.x / 2. + thickness / 2.;
         let wall_y = size.y / 2. + thickness / 2.;
-    
+
         match self {
-            Self::Left => Vec2 {
-                x: -wall_x,
-                y: 0.,
-            },
-            Self::Right => Vec2 {
-                x: wall_x,
-                y: 0.,
-            },
-            Self::Top => Vec2 {
-                x: 0.,
-                y: wall_y,
-            },
-            Self::Bottom => Vec2 {
-                x: 0.,
-                y: -wall_y,
-            },
+            Self::Left => Vec2 { x: -wall_x, y: 0. },
+            Self::Right => Vec2 { x: wall_x, y: 0. },
+            Self::Top => Vec2 { x: 0., y: wall_y },
+            Self::Bottom => Vec2 { x: 0., y: -wall_y },
         }
     }
 

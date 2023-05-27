@@ -6,5 +6,5 @@ pub enum AppState {
     Title,
     InGame,
     GameOver,
-    GameClear
+    GameClear,
 }

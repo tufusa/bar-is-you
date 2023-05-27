@@ -1,0 +1,53 @@
+[tasks.format]
+command = "cargo"
+args = ["fmt"]
+
+[tasks.build-native-release]
+command = "cargo"
+args = ["build", "--release"]
+
+[tasks.build-native-debug]
+command = "cargo"
+args = ["build"]
+
+[tasks.build-wasm-release]
+command = "cargo"
+args = ["build", "--release", "--target", "wasm32-unknown-unknown"]
+
+[tasks.run-debug]
+command = "cargo"
+args = ["run"]
+
+[tasks.run-release]
+command = "cargo"
+args = ["run", "--release"]
+
+[tasks.wasm-bindgen]
+command = "wasm-bindgen"
+args = ["--target", "web", "--out-dir", "docs", "target/wasm32-unknown-unknown/release/block-break.wasm", "--no-typescript"]
+
+[tasks.serve]
+command = "python"
+args = ["-m", "http.server"]
+
+[tasks.debug]
+dependencies = [
+  "format",
+  "build-native-debug",
+  "run-debug"
+]
+
+[tasks.release]
+dependencies = [
+  "format",
+  "build-native-release",
+  "run-release"
+]
+
+[tasks.wasm]
+dependencies = [
+  "format",
+  "build-wasm-release",
+  "wasm-bindgen",
+  "serve"
+]

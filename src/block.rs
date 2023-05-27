@@ -95,7 +95,7 @@ pub fn collision_ball(
 }
 
 pub fn collision_wall(
-    mut wall_query: Query<
+    wall_query: Query<
         &Transform,
         (
             With<wall::Wall>,
