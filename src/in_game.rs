@@ -2,7 +2,7 @@ use bevy::{prelude::*, sprite::collide_aabb::collide};
 
 use crate::{
     app_state::AppState, ball, bar, block::Block, blocks, config, field, font, out_wall, position,
-    rule, ui, velocity,
+    rule, rule_routine, ui, velocity,
 };
 
 #[derive(Component, Clone, Copy)]
@@ -19,6 +19,7 @@ pub fn setup(
     spawn(&mut commands, meshes, materials, window_query.single());
 
     rule::spawn_server(&mut commands, config::Rule::INIT, InGame);
+    rule_routine::setup(&mut commands);
 
     commands
         .entity(ui_base_query.single())

@@ -20,7 +20,10 @@ mod game_over;
 mod in_game;
 mod out_wall;
 mod position;
+mod random_rule;
 mod rule;
+mod rule_routine;
+mod rules;
 mod title;
 mod ui;
 mod velocity;
@@ -59,7 +62,13 @@ fn main() {
                 .in_set(OnUpdate(AppState::InGame)),
         )
         .add_systems(
-            (block::position_velocity, block::collision_wall).in_set(OnUpdate(AppState::InGame)),
+            (
+                block::position_velocity,
+                block::collision_wall,
+                rule_routine::routine,
+                rule_routine::tick,
+            )
+                .in_set(OnUpdate(AppState::InGame)),
         )
         .add_system(game_over::setup.in_schedule(OnEnter(AppState::GameOver)))
         .add_system(game_over::check_input.in_set(OnUpdate(AppState::GameOver)))

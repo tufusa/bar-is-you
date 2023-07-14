@@ -17,25 +17,25 @@ pub struct Rule {
     pub is_move: IsMove,
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Clone, Copy)]
 pub enum IsYou {
     Bar,
     Ball,
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Clone, Copy)]
 pub enum IsDeath {
     Out,
     Block,
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Clone, Copy)]
 pub enum IsWin {
     None,
     BreakAll,
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Clone, Copy)]
 pub enum IsMove {
     Ball,
     Bar,
