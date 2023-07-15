@@ -1,8 +1,8 @@
 use bevy::{prelude::*, sprite::collide_aabb::collide};
 
 use crate::{
-    app_state::AppState, ball, bar, block::Block, blocks, config, field, font, out_wall, position,
-    rule, rule_routine, ui, velocity,
+    app_state::AppState, ball, bar, block::Block, blocks, config, field, font, position, rule,
+    rule_routine, ui, velocity,
 };
 
 #[derive(Component, Clone, Copy)]
@@ -51,7 +51,6 @@ fn spawn(
         velocity::Velocity { x: 200., y: 200. },
         InGame,
     );
-    out_wall::spawn(commands, window, InGame);
 }
 
 pub fn check_break_all(
@@ -68,9 +67,9 @@ pub fn check_break_all(
     }
 }
 
-pub fn check_out_wall(
-    out_wall_query: Query<&Transform, With<out_wall::OutWall>>,
+pub fn check_out(
     ball_query: Query<&Transform, With<ball::Ball>>,
+    window_query: Query<&Window>,
     mut next_state: ResMut<NextState<AppState>>,
     rule_server_query: Query<&rule::RuleServer>,
 ) {
@@ -79,18 +78,16 @@ pub fn check_out_wall(
     }
 
     let ball_transform = ball_query.single();
+    let window = window_query.single();
+    let window_size = Vec2::new(window.width(), window.height());
 
-    out_wall_query.iter().for_each(|out_wall_transform| {
-        let collision = collide(
-            out_wall_transform.translation,
-            out_wall_transform.scale.truncate(),
-            ball_transform.translation,
-            ball_transform.scale.truncate(),
-        );
-
-        if let Some(_) = collision {
-            next_state.set(AppState::GameOver);
-            return;
-        }
-    })
+    let collision = collide(
+        Vec3::ZERO,
+        window_size,
+        ball_transform.translation,
+        ball_transform.scale.truncate(),
+    );
+    if collision.is_none() {
+        next_state.set(AppState::GameOver);
+    }
 }

@@ -18,7 +18,6 @@ mod font;
 mod game_clear;
 mod game_over;
 mod in_game;
-mod out_wall;
 mod position;
 mod random_rule;
 mod rule;
@@ -44,7 +43,7 @@ fn main() {
         .add_systems(
             (
                 in_game::check_break_all,
-                in_game::check_out_wall,
+                in_game::check_out,
                 field::check_rule,
                 block::transform_position,
                 block::collision_ball,

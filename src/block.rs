@@ -3,8 +3,7 @@ extern crate rand;
 use rand::Rng;
 
 use crate::{
-    app_state::AppState, ball, collider, collision, config, out_wall, position, rule, velocity,
-    wall,
+    app_state::AppState, ball, collider, collision, config, position, rule, velocity, wall,
 };
 
 #[derive(Component)]
@@ -95,14 +94,7 @@ pub fn collision_ball(
 }
 
 pub fn collision_wall(
-    wall_query: Query<
-        &Transform,
-        (
-            With<wall::Wall>,
-            With<collider::Collider>,
-            Without<out_wall::OutWall>,
-        ),
-    >,
+    wall_query: Query<&Transform, (With<wall::Wall>, With<collider::Collider>)>,
     mut block_query: Query<
         (&Transform, &mut velocity::Velocity),
         (With<Block>, With<collider::Collider>),
