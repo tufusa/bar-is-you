@@ -14,9 +14,8 @@ pub fn setup(
     materials: ResMut<Assets<ColorMaterial>>,
     ui_base_query: Query<Entity, With<ui::Base>>,
     rule_font: Res<font::Rule>,
-    window_query: Query<&Window>,
 ) {
-    spawn(&mut commands, meshes, materials, window_query.single());
+    spawn(&mut commands, meshes, materials);
 
     rule::spawn_server(&mut commands, config::Rule::INIT, InGame);
     rule_routine::setup(&mut commands);
@@ -30,7 +29,6 @@ fn spawn(
     commands: &mut Commands,
     meshes: ResMut<Assets<Mesh>>,
     materials: ResMut<Assets<ColorMaterial>>,
-    window: &Window,
 ) {
     blocks::spawn(commands, 50., 15, 5, InGame);
     ball::spawn(
